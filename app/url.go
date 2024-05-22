@@ -4,11 +4,11 @@ import (
 	"errors"
 	"math/rand"
 	"net/http"
-	"net/url"
-	"unicode"
 
 	"github.com/go-playground/validator/v10"
 )
+
+const letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 type URL struct {
 	Id           int64  `json:"-"`
@@ -38,37 +38,20 @@ func (u URLResponse) Render(w http.ResponseWriter, r *http.Request) error {
 }
 
 type URLService interface {
-	FindById(id int64) (*URL, error)
-	FindAll() ([]*URL, error)
+	// FindById(id int64) (*URL, error)
+	// FindAll() ([]*URL, error)
 	Create(payload URLPayload) (*URL, error)
-	Update(payload URLPayload, id int64) (*URL, error)
-	Delete(id int64)
+	// Update(payload URLPayload, id int64) (*URL, error)
+	// Delete(id int64)
 }
 
 func ShortenUrl(urlStr string) string {
-	var shortenedUrl string
+	randomInt := rand.Intn(6) + 5
 
-	urlObj, _ := url.Parse(urlStr)
-	searchableUrl := getSearchableUrlStr(urlObj)
-
-	randomInt := rand.Intn(5) + 5
-	for range randomInt {
-		letterIndex := rand.Intn(len(searchableUrl))
-		shortenedUrl += string(searchableUrl[letterIndex])
+	shortenedUrl := make([]byte, randomInt)
+	for i := range randomInt {
+		shortenedUrl[i] = letters[rand.Intn(len(letters))]
 	}
 
-	return shortenedUrl
-}
-
-func getSearchableUrlStr(urlObj *url.URL) string {
-	url := urlObj.Hostname() + urlObj.EscapedPath() + urlObj.RawQuery
-
-	searchableUrl := ""
-	for _, v := range url {
-		if unicode.IsLetter(v) {
-			searchableUrl += string(v)
-		}
-	}
-
-	return searchableUrl
+	return string(shortenedUrl)
 }

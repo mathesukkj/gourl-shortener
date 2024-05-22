@@ -34,7 +34,7 @@ func (s URLService) Create(payload app.URLPayload) (*app.URL, error) {
 		ShortenedURL: shortenedUrl,
 	}
 
-	return url, nil
+	return url, tx.Commit()
 }
 
 func createUrl(tx *sql.Tx, initialUrl, shortenedUrl string) (int64, error) {
