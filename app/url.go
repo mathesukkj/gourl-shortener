@@ -38,12 +38,8 @@ func (u URLResponse) Render(w http.ResponseWriter, r *http.Request) error {
 }
 
 type URLService interface {
-	// FindById(id int64) (*URL, error)
 	FindByShortened(shortenedUrl string) (*URL, error)
-	// FindAll() ([]*URL, error)
 	Create(payload URLPayload) (*URL, error)
-	// Update(payload URLPayload, id int64) (*URL, error)
-	// Delete(id int64)
 }
 
 func ShortenUrl(urlStr string) string {
