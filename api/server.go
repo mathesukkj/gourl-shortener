@@ -29,7 +29,7 @@ func (s *Server) Use(m func(http.Handler) http.Handler) {
 
 func (s *Server) registerRoutes() {
 	s.router.Post("/shorten-url", s.HandleUrlShortener)
-	s.router.Get("/{url}", s.handleRedirectToInitialUrl)
+	s.router.Get("/{url}", s.HandleRedirectToInitialUrl)
 }
 
 func (s *Server) HandleUrlShortener(w http.ResponseWriter, r *http.Request) {

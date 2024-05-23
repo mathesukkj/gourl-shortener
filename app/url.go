@@ -8,7 +8,8 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-const letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+const LETTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+const BASE_URL = "http://localhost:4090"
 
 type URL struct {
 	Id           int64  `json:"-"`
@@ -47,7 +48,7 @@ func ShortenUrl(urlStr string) string {
 
 	shortenedUrl := make([]byte, randomInt)
 	for i := range randomInt {
-		shortenedUrl[i] = letters[rand.Intn(len(letters))]
+		shortenedUrl[i] = LETTERS[rand.Intn(len(LETTERS))]
 	}
 
 	return string(shortenedUrl)

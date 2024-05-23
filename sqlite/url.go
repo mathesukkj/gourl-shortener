@@ -6,8 +6,6 @@ import (
 	"github.com/mathesukkj/gourl-shortener/app"
 )
 
-const BASE_URL = "http://localhost:4090/"
-
 type URLService struct {
 	db *sql.DB
 }
@@ -33,7 +31,7 @@ func (s URLService) Create(payload app.URLPayload) (*app.URL, error) {
 	url := &app.URL{
 		Id:           id,
 		InitialURL:   payload.Url,
-		ShortenedURL: BASE_URL + shortenedUrl,
+		ShortenedURL: app.BASE_URL + "/" + shortenedUrl,
 	}
 
 	return url, tx.Commit()
