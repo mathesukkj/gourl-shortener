@@ -2,7 +2,6 @@ package tests
 
 import (
 	"fmt"
-	"log"
 	"net/url"
 	"testing"
 
@@ -88,17 +87,6 @@ func TestFindByShortened(t *testing.T) {
 	initialUrl := "https://google.com/abab"
 	shortenedUrl := app.BASE_URL + "/abXCkeIU"
 
-	res, err := db.Exec(`
-    INSERT INTO urls (initial_url, shortened_url) 
-    VALUES (?, ?)
-  `,
-		initialUrl,
-		shortenedUrl,
-	)
-	assert.NoError(t, err)
-
-	log.Println(res.LastInsertId())
-
 	tests := []struct {
 		name     string
 		url      string
@@ -123,11 +111,22 @@ func TestFindByShortened(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			mock.ExpectBegin()
-			mock.ExpectQuery("SELECT * FROM urls")
 
-			foundUrl, err := service.FindByShortened(tt.foundURL.ShortenedURL)
-			assert.NoError(t, err)
-			assert.Equal(t, tt.foundURL, foundUrl)
+			mockedRows := sqlmock.NewRows(nil)
+			if tt.foundURL != nil {
+				mockedRows = sqlmock.NewRows([]string{"id", "initial_url", "shortened_url"})
+				mockedRows.AddRow(tt.foundURL.Id, tt.foundURL.InitialURL, tt.foundURL.ShortenedURL)
+			}
+
+			mock.ExpectQuery("SELECT \\* FROM urls WHERE shortened_url = \\?").
+				WithArgs(tt.url).
+				WillReturnRows(mockedRows)
+
+			foundUrl, err := service.FindByShortened(tt.url)
+			if tt.foundURL != nil {
+				assert.NoError(t, err)
+				assert.Equal(t, tt.foundURL, foundUrl)
+			}
 		})
 	}
 }
