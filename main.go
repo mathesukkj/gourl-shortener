@@ -1,6 +1,8 @@
 package main
 
 import (
+	_ "github.com/joho/godotenv/autoload"
+
 	"github.com/mathesukkj/gourl-shortener/api"
 	"github.com/mathesukkj/gourl-shortener/sqlite"
 )

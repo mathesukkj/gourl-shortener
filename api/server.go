@@ -1,20 +1,25 @@
 package api
 
 import (
+	"context"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/render"
 
 	"github.com/mathesukkj/gourl-shortener/app"
+	"github.com/mathesukkj/gourl-shortener/redis"
 )
 
 type Server struct {
 	router *chi.Mux
 
 	URLService app.URLService
+
+	RedisClient redis.RedisClient
 }
 
 func (s *Server) Serve(port string) {
@@ -50,6 +55,8 @@ func (s *Server) HandleUrlShortener(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	s.RedisClient.Set(context.Background(), url.ShortenedURL, url.InitialURL, time.Hour*24)
+
 	render.Render(w, r, app.URLResponse{
 		Url: url.ShortenedURL,
 	})
@@ -57,6 +64,12 @@ func (s *Server) HandleUrlShortener(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) HandleRedirectToInitialUrl(w http.ResponseWriter, r *http.Request) {
 	shortenedUrl := r.PathValue("url")
+
+	val, err := s.RedisClient.Get(context.Background(), app.BASE_URL+"/"+shortenedUrl)
+	if err == nil {
+		http.Redirect(w, r, val, http.StatusFound)
+		return
+	}
 
 	url, err := s.URLService.FindByShortened(shortenedUrl)
 	if err != nil {
