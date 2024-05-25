@@ -24,10 +24,12 @@ func (r RedisClient) Del(ctx context.Context, keys ...string) (int64, error) {
 	return r.client.Del(ctx, keys...).Result()
 }
 
-func New() *redis.Client {
-	return redis.NewClient(&redis.Options{
-		Addr:     os.Getenv("REDIS_HOST") + ":" + os.Getenv("REDIS_PORT"),
-		Password: "",
-		DB:       0,
-	})
+func New() *RedisClient {
+	return &RedisClient{
+		client: redis.NewClient(&redis.Options{
+			Addr:     os.Getenv("REDIS_HOST") + ":" + os.Getenv("REDIS_PORT"),
+			Password: "",
+			DB:       0,
+		}),
+	}
 }

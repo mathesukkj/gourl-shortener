@@ -19,7 +19,7 @@ type Server struct {
 
 	URLService app.URLService
 
-	RedisClient redis.RedisClient
+	RedisClient *redis.RedisClient
 }
 
 func (s *Server) Serve(port string) {
