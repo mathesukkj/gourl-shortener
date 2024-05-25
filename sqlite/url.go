@@ -22,15 +22,6 @@ func (s URLService) Create(payload app.URLPayload) (*app.URL, error) {
 	defer tx.Rollback()
 
 	shortenedUrl := app.ShortenUrl(payload.Url)
-	for {
-		foundUrl, err := s.FindByShortened(shortenedUrl)
-		if err != nil {
-			return nil, err
-		}
-		if foundUrl != nil {
-			break
-		}
-	}
 
 	id, err := createUrl(tx, payload.Url, shortenedUrl)
 	if err != nil {
