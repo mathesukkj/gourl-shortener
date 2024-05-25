@@ -1,0 +1,11 @@
+services:
+  redis:
+    image: redis
+    container_name: url_shortener-redis
+    ports:
+      - 6379:6379
+    volumes:
+      - redis_data:/data
+
+volumes:
+  redis_data:
